@@ -122,7 +122,7 @@ class Config(AttrDict):
             gan_separate_topk=False,
             aug_policy='',
             channels_last=False,
-            strict_resume=True,
+            strict_resume=False,
             amp_gp=False,
             amp_config=AttrDict(init_scale=65536.0,
                                 growth_factor=2.0,

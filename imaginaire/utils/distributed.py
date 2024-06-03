@@ -7,6 +7,7 @@ import ctypes
 
 import torch
 import torch.distributed as dist
+import datetime
 
 
 def init_dist(local_rank, backend='nccl', **kwargs):
@@ -15,7 +16,8 @@ def init_dist(local_rank, backend='nccl', **kwargs):
         if dist.is_initialized():
             return torch.cuda.current_device()
         torch.cuda.set_device(local_rank)
-        dist.init_process_group(backend=backend, init_method='env://', **kwargs)
+        dist.init_process_group(backend=backend, init_method='env://', timeout=datetime.timedelta(seconds=900),
+                                **kwargs)
 
     # Increase the L2 fetch granularity for faster speed.
     _libcudart = ctypes.CDLL('libcudart.so')

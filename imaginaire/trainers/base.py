@@ -316,7 +316,7 @@ class BaseTrainer(object):
                 else:
                     net_G_module = self.net_G.module
                 if hasattr(net_G_module, 'load_pretrained_network'):
-                    net_G_module.load_pretrained_network(self.net_G, checkpoint['net_G'])
+                    net_G_module.load_pretrained_network(checkpoint['net_G'])
                     print('Load generator weights only.')
                 else:
                     raise ValueError('Checkpoint cannot be loaded.')

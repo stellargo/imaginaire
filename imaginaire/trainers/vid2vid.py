@@ -361,7 +361,7 @@ class Trainer(BaseTrainer):
                 video.append(output)
 
             # Save output as mp4.
-            imageio.mimsave(video_path + '.mp4', video, fps=15)
+            imageio.mimsave(video_path + '.mp4', video, fps=25)
 
     def test_single(self, data, output_dir=None, inference_args=None):
         r"""The inference function. If output_dir exists, also save the
@@ -904,10 +904,18 @@ class Trainer(BaseTrainer):
             # Gather all outputs for dumping into video.
             if self.sequence_length > 1:
                 output_images = []
+                input_labels = []
                 for item in all_info['outputs']:
-                    output_images.append(tensor2im(item['fake_images'])[0])
+                    output_images.append(tensor2im(item['fake_images'])[0]) # list of (H, W, C)
+                for item in all_info['inputs']:
+                    input_labels.append(tensor2im(item['label'])[0]) # list of (H, W, C)
+
+                # combine the images and labels
+                output_images = np.stack(output_images, axis=0) # (T, H, W, C)
+                input_labels = np.stack(input_labels, axis=0) # (T, H, W, C)
+                video_frames = np.concatenate([output_images, input_labels], axis=1) # (T, 2H, W, C)
 
                 imageio.mimwrite(os.path.splitext(path)[0] + '.mp4',
-                                 output_images, fps=2, macro_block_size=None)
+                                 video_frames, fps=25, macro_block_size=None)
 
         self.net_G.float()
